@@ -24,6 +24,11 @@ namespace PokedexApp.Services
             return await _pokemonRepository.GetPokemonByNameAsync(name);
         }
 
+        public async Task<IEnumerable<Pokemon>> GetPokemonsInPokedexAsync()
+        {
+            return await _pokemonRepository.GetPokemonsInPokedexAsync();
+        }
+
         public async Task<IEnumerable<Pokemon>> GetPokemonsAsync()
         {
             return await _pokemonRepository.GetPokemonsAsync();

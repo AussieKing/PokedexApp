@@ -126,6 +126,12 @@ namespace PokedexApp.Repositories
             return pokemons;
         }
 
+        public async Task<IEnumerable<Pokemon>> GetPokemonsInPokedexAsync()
+        {
+            _logger.LogInformation("Fetching all Pokemons from the Pokedex database.");
+            return await _context.Pokemons.ToListAsync();
+        }
+
         public async Task UpdatePokemonAsync(Pokemon pokemon)
         {
             _logger.LogInformation("Updating a Pokemon with ID {Id} in the database.", pokemon.Id);
