@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PokedexApp.Data;
+using PokedexApp.Middlewares;
 using PokedexApp.Repositories;
 using PokedexApp.Services;
 using PokedexApp.Validators;
@@ -39,6 +40,8 @@ builder.Services.AddDbContext<PokedexContext>(options =>
 );
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
