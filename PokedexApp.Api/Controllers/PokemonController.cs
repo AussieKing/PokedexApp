@@ -34,35 +34,5 @@ namespace PokedexApp.Controllers
         {
             return await _pokemonService.GetPokemonByNameAsync(name);
         }
-
-        [HttpPost("addById/{id}")]
-        public async Task<IActionResult> AddById(int id)
-        {
-            await _pokemonService.AddPokemonByIdAsync(id);
-            return CreatedAtAction(nameof(GetById), new { id = id }, null);
-        }
-
-        [HttpPost("addByName/{name}")]
-        public async Task<IActionResult> AddByName(string name)
-        {
-            await _pokemonService.AddPokemonByNameAsync(name);
-            return CreatedAtAction(nameof(GetByName), new { name = name }, null);
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Pokemon pokemon)
-        {
-            await _pokemonService.UpdatePokemonAsync(pokemon);
-            return Ok("The Pokemon has been updated in your Pokedex");
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            await _pokemonService.DeletePokemonAsync(id);
-            return Ok("The Pokemon has been deleted from your Pokedex");
-        }
     }
 }
-
-// add a different controller to perform UPDATE functions like ADD and EDIT
