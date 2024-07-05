@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -5,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using PokedexApp.Data;
 using PokedexApp.Repositories;
 using PokedexApp.Services;
+using PokedexApp.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddTransient<IPokemonRepository, PokemonRepository>();
 builder.Services.AddTransient<IPokemonService, PokemonService>();
+builder
+    .Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<PokemonValidator>());
 
 // Configure EF Core with SQL Server
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
