@@ -5,7 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using PokedexApp.Data;
 using PokedexApp.Models;
 
@@ -68,15 +69,38 @@ namespace PokedexApp.Repositories
             HttpResponseMessage response = await _httpClient.GetAsync(url);
 
             _logger.LogInformation("Fetching Pokemon with ID {Id} from the API.", id);
-            return response.StatusCode switch
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                HttpStatusCode.OK
-                    => JsonConvert.DeserializeObject<Pokemon>(
-                        await response.Content.ReadAsStringAsync()
-                    ),
-                HttpStatusCode.NotFound => throw new ArgumentException("Pokemon not found"),
-                _ => throw new Exception("Error fetching data from the API.")
-            };
+                var data = await response.Content.ReadAsStringAsync();
+                var json = JObject.Parse(data);
+                pokemon = new Pokemon
+                {
+                    Id = json["id"].Value<int>(),
+                    Name = json["name"].Value<string>(),
+                    Height = json["height"].Value<int>(),
+                    Weight = json["weight"].Value<int>(),
+                    BaseExperience = json["base_experience"].Value<int>(),
+                    ImageUrl = json["sprites"]
+                        ["other"]["official-artwork"]["front_default"]
+                        .Value<string>(),
+                    Types = json["types"]
+                        .Select(t => new PokemonType
+                        {
+                            Slot = t["slot"].Value<int>(),
+                            Type = new TypeInfo { Name = t["type"]["name"].Value<string>() }
+                        })
+                        .ToList()
+                };
+                return pokemon;
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new ArgumentException("Pokemon not found");
+            }
+            else
+            {
+                throw new Exception("Error fetching data from the API.");
+            }
         }
 
         public async Task<Pokemon> GetPokemonByNameAsync(string name)
@@ -93,15 +117,38 @@ namespace PokedexApp.Repositories
             HttpResponseMessage response = await _httpClient.GetAsync(url);
 
             _logger.LogInformation("Fetching Pokemon with name {Name} from the API.", name);
-            return response.StatusCode switch
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                HttpStatusCode.OK
-                    => JsonConvert.DeserializeObject<Pokemon>(
-                        await response.Content.ReadAsStringAsync()
-                    ),
-                HttpStatusCode.NotFound => throw new ArgumentException("Pokemon not found"),
-                _ => throw new Exception("Error fetching data from the API.")
-            };
+                var data = await response.Content.ReadAsStringAsync();
+                var json = JObject.Parse(data);
+                pokemon = new Pokemon
+                {
+                    Id = json["id"].Value<int>(),
+                    Name = json["name"].Value<string>(),
+                    Height = json["height"].Value<int>(),
+                    Weight = json["weight"].Value<int>(),
+                    BaseExperience = json["base_experience"].Value<int>(),
+                    ImageUrl = json["sprites"]
+                        ["other"]["official-artwork"]["front_default"]
+                        .Value<string>(),
+                    Types = json["types"]
+                        .Select(t => new PokemonType
+                        {
+                            Slot = t["slot"].Value<int>(),
+                            Type = new TypeInfo { Name = t["type"]["name"].Value<string>() }
+                        })
+                        .ToList()
+                };
+                return pokemon;
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new ArgumentException("Pokemon not found");
+            }
+            else
+            {
+                throw new Exception("Error fetching data from the API.");
+            }
         }
 
         public async Task<IEnumerable<Pokemon>> GetPokemonsAsync()
@@ -116,8 +163,26 @@ namespace PokedexApp.Repositories
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string json = await response.Content.ReadAsStringAsync();
-                    var pokemon = JsonConvert.DeserializeObject<Pokemon>(json);
+                    var data = await response.Content.ReadAsStringAsync();
+                    var json = JObject.Parse(data);
+                    var pokemon = new Pokemon
+                    {
+                        Id = json["id"].Value<int>(),
+                        Name = json["name"].Value<string>(),
+                        Height = json["height"].Value<int>(),
+                        Weight = json["weight"].Value<int>(),
+                        BaseExperience = json["base_experience"].Value<int>(),
+                        ImageUrl = json["sprites"]
+                            ["other"]["official-artwork"]["front_default"]
+                            .Value<string>(),
+                        Types = json["types"]
+                            .Select(t => new PokemonType
+                            {
+                                Slot = t["slot"].Value<int>(),
+                                Type = new TypeInfo { Name = t["type"]["name"].Value<string>() }
+                            })
+                            .ToList()
+                    };
                     pokemons.Add(pokemon);
                 }
             }

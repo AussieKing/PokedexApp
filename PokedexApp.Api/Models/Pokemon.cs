@@ -23,6 +23,9 @@ namespace PokedexApp.Models
 
         [JsonProperty("types")]
         public List<PokemonType> Types { get; set; }
+
+        [JsonProperty("image_url")]
+        public string ImageUrl { get; set; }
     }
 
     public class PokemonType
@@ -40,7 +43,7 @@ namespace PokedexApp.Models
 
     public class TypeInfo
     {
-        public int Id { get; set; } // Add a primary key
+        public int Id { get; set; } // Primary key
 
         [JsonProperty("name")]
         public string Name { get; set; }
