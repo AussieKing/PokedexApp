@@ -11,18 +11,22 @@ namespace PokedexApp.Data
         public DbSet<Pokemon> Pokemons { get; set; }
         public DbSet<PokemonType> PokemonTypes { get; set; }
         public DbSet<TypeInfo> TypeInfos { get; set; }
+        public DbSet<PokemonStat> PokemonStats { get; set; }
+        public DbSet<StatInfo> StatInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .Entity<Pokemon>()
-                .HasMany(p => p.Types)
-                .WithOne()
-                .HasForeignKey(pt => pt.PokemonId);
+                .Entity<PokemonType>()
+                .HasOne(pt => pt.Type)
+                .WithMany()
+                .HasForeignKey(pt => pt.TypeId);
 
-            modelBuilder.Entity<PokemonType>().HasKey(pt => pt.Id);
-
-            modelBuilder.Entity<TypeInfo>().HasKey(ti => ti.Id);
+            modelBuilder
+                .Entity<PokemonStat>()
+                .HasOne(ps => ps.Stat)
+                .WithMany()
+                .HasForeignKey(ps => ps.StatId);
         }
     }
 }

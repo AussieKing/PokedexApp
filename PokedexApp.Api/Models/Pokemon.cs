@@ -23,26 +23,11 @@ namespace PokedexApp.Models
 
         [JsonProperty("types")]
         public List<PokemonType> Types { get; set; }
-    }
 
-    public class PokemonType
-    {
-        public int Id { get; set; } // Primary key
+        [JsonProperty("image_url")]
+        public string ImageUrl { get; set; }
 
-        [JsonProperty("slot")]
-        public int Slot { get; set; }
-
-        public int PokemonId { get; set; } // Foreign key to Pokemon
-
-        [JsonProperty("type")]
-        public TypeInfo Type { get; set; }
-    }
-
-    public class TypeInfo
-    {
-        public int Id { get; set; } // Add a primary key
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        [JsonProperty("stats")]
+        public List<PokemonStat> Stats { get; set; }
     }
 }

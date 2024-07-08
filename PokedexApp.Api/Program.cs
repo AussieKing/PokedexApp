@@ -1,9 +1,5 @@
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using PokedexApp.Data;
 using PokedexApp.Middlewares;
 using PokedexApp.Repositories;
@@ -22,6 +18,18 @@ builder.Services.AddTransient<IPokemonService, PokemonService>();
 builder
     .Services.AddControllers()
     .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<PokemonValidator>());
+
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "AllowReactApp",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+        }
+    );
+});
 
 // Configure EF Core with SQL Server
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -45,6 +53,9 @@ builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
+// Apply the CORS policy before other middlewares
+app.UseCors("AllowReactApp");
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
@@ -55,7 +66,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PokedexApp v1"));
 }
 
-app.UseRouting();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
