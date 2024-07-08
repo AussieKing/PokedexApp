@@ -43,7 +43,9 @@ const BattleArena = ({ pokemons }) => {
 
     return (
         <div className="battle-arena">
-            <h2>Battle Arena</h2>
+            <div className="background-box">
+                <h2>Battle Arena</h2>
+            </div>
             <div className="controls">
                 <select onChange={(e) => setBattlePokemon1(pokemons.find(p => p.id == e.target.value))}>
                     <option>Select Battle Pokemon 1</option>
