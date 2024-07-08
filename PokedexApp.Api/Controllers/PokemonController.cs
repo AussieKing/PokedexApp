@@ -24,15 +24,25 @@ namespace PokedexApp.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<Pokemon> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            return await _pokemonService.GetPokemonByIdAsync(id);
+            var pokemon = await _pokemonService.GetPokemonByIdAsync(id);
+            if (pokemon == null)
+            {
+                return NotFound($"Pokemon with ID '{id}' not found.");
+            }
+            return Ok(pokemon);
         }
 
         [HttpGet("name/{name}")]
-        public async Task<Pokemon> GetByName(string name)
+        public async Task<IActionResult> GetByName(string name)
         {
-            return await _pokemonService.GetPokemonByNameAsync(name);
+            var pokemon = await _pokemonService.GetPokemonByNameAsync(name);
+            if (pokemon == null)
+            {
+                return NotFound($"Pokemon with name '{name}' not found.");
+            }
+            return Ok(pokemon);
         }
     }
 }

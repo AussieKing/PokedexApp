@@ -16,10 +16,11 @@ namespace PokedexApp.Controllers
             _pokemonService = pokemonService;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<Pokemon>> GetPokemonsInPokedex()
+        [HttpGet("pokedex")]
+        public async Task<IActionResult> GetPokemonsInPokedex()
         {
-            return await _pokemonService.GetPokemonsInPokedexAsync();
+            var pokemons = await _pokemonService.GetPokemonsInPokedexAsync();
+            return Ok(pokemons);
         }
 
         [HttpPost("addById/{id}")]
