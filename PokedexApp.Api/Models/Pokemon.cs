@@ -26,26 +26,8 @@ namespace PokedexApp.Models
 
         [JsonProperty("image_url")]
         public string ImageUrl { get; set; }
-    }
 
-    public class PokemonType
-    {
-        public int Id { get; set; } // Primary key
-
-        [JsonProperty("slot")]
-        public int Slot { get; set; }
-
-        public int PokemonId { get; set; } // Foreign key to Pokemon
-
-        [JsonProperty("type")]
-        public TypeInfo Type { get; set; }
-    }
-
-    public class TypeInfo
-    {
-        public int Id { get; set; } // Primary key
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        [JsonProperty("stats")]
+        public List<PokemonStat> Stats { get; set; }
     }
 }
