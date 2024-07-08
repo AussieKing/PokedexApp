@@ -60,7 +60,9 @@ const BattleArena = ({ pokemons }) => {
 
     return (
         <div className="battle-arena">
-            <h2>Battle Arena</h2>
+            <div className="background-box">
+                <h2>Battle Arena</h2>
+            </div>
             <div>
                 <select onChange={(e) => setSelectedPokemon1(e.target.value)}>
                     <option value="">Select Battle Pokemon 1</option>
