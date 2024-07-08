@@ -2,71 +2,88 @@ import React, { useState } from 'react';
 import './BattleArena.css';
 
 const BattleArena = ({ pokemons }) => {
-    const [battlePokemon1, setBattlePokemon1] = useState(null);
-    const [battlePokemon2, setBattlePokemon2] = useState(null);
-    const [battleLog, setBattleLog] = useState('');
+    const [battleLog, setBattleLog] = useState([]);
+    const [selectedPokemon1, setSelectedPokemon1] = useState(null);
+    const [selectedPokemon2, setSelectedPokemon2] = useState(null);
 
     const handleBattle = () => {
-        if (!battlePokemon1 || !battlePokemon2) {
-            setBattleLog('Please select two Pokémon to battle.');
+        if (!selectedPokemon1 || !selectedPokemon2) {
+            setBattleLog(['Please select two Pokemons to battle.']);
             return;
         }
 
-        if (battlePokemon1.id === battlePokemon2.id) {
-            setBattleLog('Please select two different Pokémon.');
-            return;
-        }
+        const pokemon1 = pokemons.find(p => p.name === selectedPokemon1);
+        const pokemon2 = pokemons.find(p => p.name === selectedPokemon2);
 
-        setBattleLog('');
-        simulateBattle(battlePokemon1, battlePokemon2);
-    };
-
-    const simulateBattle = (pokemon1, pokemon2) => {
-        let log = '';
+        const log = [];
         let hp1 = pokemon1.stats.find(stat => stat.stat.name === 'hp').baseStat;
         let hp2 = pokemon2.stats.find(stat => stat.stat.name === 'hp').baseStat;
 
         while (hp1 > 0 && hp2 > 0) {
-            const damage1 = Math.floor(Math.random() * 20) + 10;
-            const damage2 = Math.floor(Math.random() * 20) + 10;
-            hp2 -= damage1;
-            log += `${pokemon1.name} attacks ${pokemon2.name} for ${damage1} damage.\n`;
-            if (hp2 <= 0) break;
-            hp1 -= damage2;
-            log += `${pokemon2.name} attacks ${pokemon1.name} for ${damage2} damage.\n`;
+            if (Math.random() > 0.5) {
+                // Pokémon 1 attacks Pokémon 2
+                const attack = calculateAttack(pokemon1);
+                const block = calculateBlock(pokemon2);
+                const damage = Math.max(0, attack - block);
+                hp2 -= damage;
+                log.push(`${pokemon1.name} attacks ${pokemon2.name} for ${damage} damage.`);
+            } else {
+                // Pokémon 2 attacks Pokémon 1
+                const attack = calculateAttack(pokemon2);
+                const block = calculateBlock(pokemon1);
+                const damage = Math.max(0, attack - block);
+                hp1 -= damage;
+                log.push(`${pokemon2.name} attacks ${pokemon1.name} for ${damage} damage.`);
+            }
         }
 
-        const winner = hp1 > 0 ? pokemon1.name : pokemon2.name;
-        log += `${winner} wins!`;
+        if (hp1 <= 0) {
+            log.push(`${pokemon2.name} wins!`);
+        } else {
+            log.push(`${pokemon1.name} wins!`);
+        }
+
         setBattleLog(log);
+    };
+
+    const calculateAttack = (pokemon) => {
+        const attackStats = ['attack', 'special-attack'];
+        const stat = pokemon.stats.find(stat => attackStats.includes(stat.stat.name));
+        return Math.floor(stat.baseStat * Math.random());
+    };
+
+    const calculateBlock = (pokemon) => {
+        const defenseStats = ['defense', 'special-defense'];
+        const stat = pokemon.stats.find(stat => defenseStats.includes(stat.stat.name));
+        return Math.floor(stat.baseStat * Math.random());
     };
 
     return (
         <div className="battle-arena">
-            <div className="background-box">
-                <h2>Battle Arena</h2>
-            </div>
-            <div className="controls">
-                <select onChange={(e) => setBattlePokemon1(pokemons.find(p => p.id == e.target.value))}>
-                    <option>Select Battle Pokemon 1</option>
-                    {pokemons.map(p => (
-                        <option key={p.id} value={p.id}>
-                            {p.name}
+            <h2>Battle Arena</h2>
+            <div>
+                <select onChange={(e) => setSelectedPokemon1(e.target.value)}>
+                    <option value="">Select Battle Pokemon 1</option>
+                    {pokemons.map(pokemon => (
+                        <option key={pokemon.id} value={pokemon.name}>
+                            {pokemon.name}
                         </option>
                     ))}
                 </select>
-                <select onChange={(e) => setBattlePokemon2(pokemons.find(p => p.id == e.target.value))}>
-                    <option>Select Battle Pokemon 2</option>
-                    {pokemons.map(p => (
-                        <option key={p.id} value={p.id}>
-                            {p.name}
+                <select onChange={(e) => setSelectedPokemon2(e.target.value)}>
+                    <option value="">Select Battle Pokemon 2</option>
+                    {pokemons.map(pokemon => (
+                        <option key={pokemon.id} value={pokemon.name}>
+                            {pokemon.name}
                         </option>
                     ))}
                 </select>
                 <button onClick={handleBattle}>Battle Pokemons</button>
             </div>
             <div className="battle-log">
-                <pre>{battleLog}</pre>
+                {battleLog.map((entry, index) => (
+                    <p key={index}>{entry}</p>
+                ))}
             </div>
         </div>
     );
