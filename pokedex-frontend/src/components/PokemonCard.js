@@ -14,22 +14,22 @@ const PokemonCard = ({ pokemon, addToPokedex, deleteFromPokedex }) => {
         pokemon.stats.forEach(stat => {
             switch (stat.stat.name) {
                 case 'hp':
-                    stats.hp = stat.base_stat;
+                    stats.hp = stat.baseStat;
                     break;
                 case 'attack':
-                    stats.attack = stat.base_stat;
+                    stats.attack = stat.baseStat;
                     break;
                 case 'defense':
-                    stats.defense = stat.base_stat;
+                    stats.defense = stat.baseStat;
                     break;
                 case 'special-attack':
-                    stats.specialAttack = stat.base_stat;
+                    stats.specialAttack = stat.baseStat;
                     break;
                 case 'special-defense':
-                    stats.specialDefense = stat.base_stat;
+                    stats.specialDefense = stat.baseStat;
                     break;
                 case 'speed':
-                    stats.speed = stat.base_stat;
+                    stats.speed = stat.baseStat;
                     break;
                 default:
                     break;
