@@ -46,7 +46,7 @@ const PokemonCard = ({ pokemon, addToPokedex, deleteFromPokedex }) => {
         (stats.speed !== 'N/A' ? stats.speed : 0);
 
     return (
-        <div className="pokemon-card">
+        <div className="pokemon-card" id={`pokemon-${pokemon.id}`}>
             <h2>{pokemon.name}</h2>
             <img src={pokemon.imageUrl} alt={pokemon.name} onError={(e) => { e.target.onerror = null; e.target.src = "default-image-url.png" }} />
             <p>Type: {pokemon.types && pokemon.types.map(t => t.type.name).join(', ')}</p>

@@ -1,17 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './BattleArena.css';
 
 const BattleArena = ({ pokemons }) => {
     const [battleLog, setBattleLog] = useState([]);
     const [selectedPokemon1, setSelectedPokemon1] = useState(null);
     const [selectedPokemon2, setSelectedPokemon2] = useState(null);
+    const [isBattling, setIsBattling] = useState(false);
+    const [countdown, setCountdown] = useState(3);
+
+    useEffect(() => {
+        if (countdown > 0 && isBattling) {
+            const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+            return () => clearTimeout(timer);
+        } else if (countdown === 0) {
+            startBattle();
+        }
+    }, [countdown, isBattling]);
 
     const handleBattle = () => {
         if (!selectedPokemon1 || !selectedPokemon2) {
             setBattleLog(['Please select two Pokemons to battle.']);
             return;
         }
+        setCountdown(3);
+        setIsBattling(true);
+        setBattleLog([]);
+    };
 
+    const startBattle = () => {
         const pokemon1 = pokemons.find(p => p.name === selectedPokemon1);
         const pokemon2 = pokemons.find(p => p.name === selectedPokemon2);
 
@@ -19,7 +35,7 @@ const BattleArena = ({ pokemons }) => {
         let hp1 = pokemon1.stats.find(stat => stat.stat.name === 'hp').baseStat;
         let hp2 = pokemon2.stats.find(stat => stat.stat.name === 'hp').baseStat;
 
-        while (hp1 > 0 && hp2 > 0) {
+        const battleInterval = setInterval(() => {
             if (Math.random() > 0.5) {
                 // Pokémon 1 attacks Pokémon 2
                 const attack = calculateAttack(pokemon1);
@@ -27,6 +43,13 @@ const BattleArena = ({ pokemons }) => {
                 const damage = Math.max(0, attack - block);
                 hp2 -= damage;
                 log.push(`${pokemon1.name} attacks ${pokemon2.name} for ${damage} damage.`);
+                const pokemon2Element = document.getElementById(`pokemon-${pokemon2.id}`);
+                if (pokemon2Element) {
+                    pokemon2Element.classList.add('pokemon-shake');
+                    setTimeout(() => {
+                        pokemon2Element.classList.remove('pokemon-shake');
+                    }, 500);
+                }
             } else {
                 // Pokémon 2 attacks Pokémon 1
                 const attack = calculateAttack(pokemon2);
@@ -34,16 +57,28 @@ const BattleArena = ({ pokemons }) => {
                 const damage = Math.max(0, attack - block);
                 hp1 -= damage;
                 log.push(`${pokemon2.name} attacks ${pokemon1.name} for ${damage} damage.`);
+                const pokemon1Element = document.getElementById(`pokemon-${pokemon1.id}`);
+                if (pokemon1Element) {
+                    pokemon1Element.classList.add('pokemon-shake');
+                    setTimeout(() => {
+                        pokemon1Element.classList.remove('pokemon-shake');
+                    }, 500);
+                }
             }
-        }
 
-        if (hp1 <= 0) {
-            log.push(`${pokemon2.name} wins!`);
-        } else {
-            log.push(`${pokemon1.name} wins!`);
-        }
+            setBattleLog([...log]);
 
-        setBattleLog(log);
+            if (hp1 <= 0 || hp2 <= 0) {
+                clearInterval(battleInterval);
+                if (hp1 <= 0) {
+                    log.push(`${pokemon2.name} wins!`);
+                } else {
+                    log.push(`${pokemon1.name} wins!`);
+                }
+                setBattleLog([...log]);
+                setIsBattling(false);
+            }
+        }, 1000);
     };
 
     const calculateAttack = (pokemon) => {
@@ -80,11 +115,18 @@ const BattleArena = ({ pokemons }) => {
                         </option>
                     ))}
                 </select>
-                <button onClick={handleBattle}>Battle Pokemons</button>
+                <button onClick={handleBattle} disabled={isBattling}>Battle Pokemons</button>
             </div>
+            {isBattling && countdown > 0 && (
+                <div className="countdown">
+                    {countdown}
+                </div>
+            )}
             <div className="battle-log">
                 {battleLog.map((entry, index) => (
-                    <p key={index}>{entry}</p>
+                    <p key={index}>
+                        {entry}
+                    </p>
                 ))}
             </div>
         </div>
