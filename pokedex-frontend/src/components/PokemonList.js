@@ -72,10 +72,11 @@ const PokemonList = () => {
     const deleteFromPokedex = async (id) => {
         try {
             await axios.delete(`http://localhost:5037/api/pokemoncommand/${id}`);
-            setNotification('Pokemon deleted from Pokedex.');
-            setTimeout(() => setNotification(''), 3000);
+            alert('Pokemon deleted successfully!');
+            setPokemons(pokemons.filter(pokemon => pokemon.id !== id));
         } catch (error) {
             console.error('Error deleting from Pokedex:', error);
+            alert('Failed to delete Pokemon. Please try again.');
         }
     };
 
