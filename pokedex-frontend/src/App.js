@@ -55,7 +55,7 @@ const App = () => {
         try {
             const pokemon = pokemons.find(p => p.id === id);
             if (pokemon) {
-                await axios.post('http://localhost:5037/api/pokemoncommand', pokemon);
+                await axios.post(`http://localhost:5037/api/pokemoncommand/addById/${id}`);
                 alert('Pokemon added to Pokedex!');
             } else {
                 alert('Pokemon not found.');
