@@ -1,56 +1,67 @@
 import React from 'react';
-import axios from 'axios';
 
-const PokemonCard = ({ pokemon, refreshPokemons }) => {
-    const handleAddToPokedex = async () => {
-        try {
-            await axios.post(`http://localhost:5037/api/pokemoncommand/addById/${pokemon.id}`);
-            refreshPokemons();
-            showNotification('Pokemon added to Pokedex!', 'success');
-        } catch (error) {
-            console.error('Error adding to Pokedex:', error);
-        }
+const PokemonCard = ({ pokemon, addToPokedex, deleteFromPokedex }) => {
+    const stats = {
+        hp: 'N/A',
+        attack: 'N/A',
+        defense: 'N/A',
+        specialAttack: 'N/A',
+        specialDefense: 'N/A',
+        speed: 'N/A'
     };
 
-    const handleDeleteFromPokedex = async () => {
-        try {
-            await axios.delete(`http://localhost:5037/api/pokemoncommand/${pokemon.id}`);
-            refreshPokemons();
-            showNotification('Pokemon deleted from Pokedex.', 'error');
-        } catch (error) {
-            console.error('Error deleting from Pokedex:', error);
-        }
-    };
+    if (pokemon.stats) {
+        pokemon.stats.forEach(stat => {
+            switch (stat.stat.name) {
+                case 'hp':
+                    stats.hp = stat.base_stat;
+                    break;
+                case 'attack':
+                    stats.attack = stat.base_stat;
+                    break;
+                case 'defense':
+                    stats.defense = stat.base_stat;
+                    break;
+                case 'special-attack':
+                    stats.specialAttack = stat.base_stat;
+                    break;
+                case 'special-defense':
+                    stats.specialDefense = stat.base_stat;
+                    break;
+                case 'speed':
+                    stats.speed = stat.base_stat;
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
 
-    const showNotification = (message, type) => {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.innerText = message;
-        document.body.appendChild(notification);
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 3000);
-    };
-
-    const totalScore = pokemon.hp + pokemon.attack + pokemon.defense + pokemon.specialAttack + pokemon.specialDefense + pokemon.speed;
+    const totalScore =
+        (stats.hp !== 'N/A' ? stats.hp : 0) +
+        (stats.attack !== 'N/A' ? stats.attack : 0) +
+        (stats.defense !== 'N/A' ? stats.defense : 0) +
+        (stats.specialAttack !== 'N/A' ? stats.specialAttack : 0) +
+        (stats.specialDefense !== 'N/A' ? stats.specialDefense : 0) +
+        (stats.speed !== 'N/A' ? stats.speed : 0);
 
     return (
         <div className="pokemon-card">
             <h2>{pokemon.name}</h2>
             <img src={pokemon.imageUrl} alt={pokemon.name} onError={(e) => { e.target.onerror = null; e.target.src = "default-image-url.png" }} />
-            <p>Type: {pokemon.types?.map(type => type.type.name).join(', ') || 'Unknown'}</p>
-            <p>HP: {pokemon.hp}</p>
-            <p>Attack: {pokemon.attack}</p>
-            <p>Defense: {pokemon.defense}</p>
-            <p>Special Attack: {pokemon.specialAttack}</p>
-            <p>Special Defense: {pokemon.specialDefense}</p>
-            <p>Speed: {pokemon.speed}</p>
+            <p>Type: {pokemon.types && pokemon.types.map(t => t.type.name).join(', ')}</p>
+            <p>HP: {stats.hp}</p>
+            <p>Attack: {stats.attack}</p>
+            <p>Defense: {stats.defense}</p>
+            <p>Special Attack: {stats.specialAttack}</p>
+            <p>Special Defense: {stats.specialDefense}</p>
+            <p>Speed: {stats.speed}</p>
             <p>Total Score: {totalScore}</p>
             <p>Height: {pokemon.height}</p>
             <p>Weight: {pokemon.weight}</p>
             <div className="pokemon-actions">
-                <button onClick={handleAddToPokedex}>Add to Pokedex</button>
-                <button onClick={handleDeleteFromPokedex}>Delete from Pokedex</button>
+                <button onClick={() => addToPokedex(pokemon.id)}>Add to Pokedex</button>
+                <button onClick={() => deleteFromPokedex(pokemon.id)}>Delete from Pokedex</button>
             </div>
         </div>
     );
