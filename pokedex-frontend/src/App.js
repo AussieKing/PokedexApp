@@ -8,7 +8,7 @@ const App = () => {
     const [pokemons, setPokemons] = useState([]);
     const [searchId, setSearchId] = useState('');
     const [searchName, setSearchName] = useState('');
-    const [pokedexPokemons, setPokedexPokemons] = useState([]);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         fetchPokemons();
@@ -18,8 +18,10 @@ const App = () => {
         try {
             const response = await axios.get('http://localhost:5037/api/pokemon');
             setPokemons(response.data);
+            setErrorMessage(''); 
         } catch (error) {
             console.error('Error fetching pokemons:', error);
+            setErrorMessage('Failed to fetch pokemons. Please try again later.');
         }
     };
 
@@ -27,8 +29,10 @@ const App = () => {
         try {
             const response = await axios.get(`http://localhost:5037/api/pokemon/${searchId}`);
             setPokemons([response.data]);
+            setErrorMessage(''); 
         } catch (error) {
             console.error('Error fetching pokemon by ID:', error);
+            setErrorMessage('Pokemon with the specified ID not found.');
         }
     };
 
@@ -36,33 +40,34 @@ const App = () => {
         try {
             const response = await axios.get(`http://localhost:5037/api/pokemon/name/${searchName}`);
             setPokemons([response.data]);
+            setErrorMessage(''); 
         } catch (error) {
             console.error('Error fetching pokemon by name:', error);
+            if (error.response && error.response.status === 404) {
+                setErrorMessage(error.response.data);
+            } else {
+                setErrorMessage('Failed to fetch pokemon by name. Please check details again.');
+            }
         }
     };
 
     const fetchFromPokedex = async () => {
         try {
-            const response = await axios.get('http://localhost:5037/api/pokemoncommand');
-            setPokedexPokemons(response.data);
-            setPokemons(response.data); // Update the state to render the Pokedex Pokemons
+            const response = await axios.get('http://localhost:5037/api/pokemoncommand/pokedex');
+            setPokemons(response.data);
         } catch (error) {
             console.error('Error fetching pokemons from Pokedex:', error);
+            alert('Failed to fetch Pokemons from Pokedex. Please try again.');
         }
     };
 
     const addToPokedex = async (id) => {
         try {
-            const pokemon = pokemons.find(p => p.id === id);
-            if (pokemon) {
-                await axios.post(`http://localhost:5037/api/pokemoncommand/addById/${id}`);
-                alert('Pokemon added to Pokedex!');
-            } else {
-                alert('Pokemon not found.');
-            }
+            await axios.post(`http://localhost:5037/api/pokemoncommand/addById/${id}`);
+            alert('Pokemon added to Pokedex successfully!');
         } catch (error) {
             console.error('Error adding to Pokedex:', error);
-            alert('Failed to add Pokemon to Pokedex. Please try again.');
+            alert('Failed to add Pokemon to Pokedex. Please check details again.');
         }
     };
 
@@ -70,9 +75,7 @@ const App = () => {
         try {
             await axios.delete(`http://localhost:5037/api/pokemoncommand/${id}`);
             alert('Pokemon deleted successfully!');
-            // Update the state to remove the deleted Pokemon
             setPokemons(pokemons.filter(pokemon => pokemon.id !== id));
-            setPokedexPokemons(pokedexPokemons.filter(pokemon => pokemon.id !== id)); // Update pokedexPokemons state as well
         } catch (error) {
             console.error('Error deleting from Pokedex:', error);
             alert('Failed to delete Pokemon. Please try again.');
@@ -85,8 +88,8 @@ const App = () => {
                 <h1>Pokedex</h1>
             </div>
             <div className="controls">
-                <button onClick={fetchPokemons}>Fetch All Pokemon</button>
-                <button onClick={fetchFromPokedex}>Fetch from Pokedex</button>
+                <button onClick={fetchPokemons}>See All Pokemon</button>
+                <button onClick={fetchFromPokedex}>My Pokedex</button>
                 <input
                     type="text"
                     placeholder="Search by ID"
@@ -102,6 +105,7 @@ const App = () => {
                 />
                 <button onClick={fetchPokemonByName}>Search by Name</button>
             </div>
+            {errorMessage && <div className="error-message">{errorMessage}</div>}
             <div className="pokemon-list">
                 {pokemons.map(pokemon => (
                     <PokemonCard
@@ -112,7 +116,7 @@ const App = () => {
                     />
                 ))}
             </div>
-            {pokemons.length > 1 && <BattleArena pokemons={pokemons} />}
+            <BattleArena pokemons={pokemons} />
         </div>
     );
 };
