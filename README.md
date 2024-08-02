@@ -81,23 +81,24 @@ The frontend should now be running on http://localhost:3000.
 
 ## Screenshots
 ### Fetch 152 Pokemons:
-![Fetch-152-Pokemons](https://github.com/AussieKing/PokedexApp/assets/126050763/3b725084-4b00-45a5-ae64-70feb20b2c34)
+<img width="310" alt="fetch_152_pokemon" src="https://github.com/user-attachments/assets/f133af7b-bb70-477f-ac52-c67fe720a6b7">
 
 ### Fetch Pokedex:
-![Fetch-Pokedex](https://github.com/AussieKing/PokedexApp/assets/126050763/3001301f-e384-42ae-a0d7-89577f8b6e19)
+<img width="494" alt="fetch_pokedex" src="https://github.com/user-attachments/assets/370c8b39-897d-46cc-9070-b8a75226ba79">
+
 ![SQL-Pokedex](https://github.com/AussieKing/PokedexApp/assets/126050763/abd2fbd1-aeb6-4ad1-9d3a-03acf626bfa1)
 
 ### Add Pokeomon to Pokedex:
-![Added-Pokemon](https://github.com/AussieKing/PokedexApp/assets/126050763/b6c44691-df91-45da-a779-23e70969bde7)
+<img width="238" alt="pokemon_to_pokedex" src="https://github.com/user-attachments/assets/4c8eea5c-4296-4852-b3fd-c1df1f60fd73">
 
 ### Delete Pokemon from Pokedex:
-![Delete-Pokemon](https://github.com/AussieKing/PokedexApp/assets/126050763/12ec2875-c191-4841-ac2e-533591cecf4f)
+<img width="473" alt="pokemon_deleted_pokedex" src="https://github.com/user-attachments/assets/18ddb2a7-ca01-4086-ad3f-170645d89565">
 
 ### Battle Pokemons:
-![Battle](https://github.com/AussieKing/PokedexApp/assets/126050763/76f4282d-c993-4e73-b4c5-e20b7ba5da42)
+<img width="466" alt="battle" src="https://github.com/user-attachments/assets/eb89696b-01cf-4297-92fd-2d6c9b3c1ad0">
 
 ### Battle Result:
-![Battlefield](https://github.com/AussieKing/PokedexApp/assets/126050763/79b7575f-db06-4446-babe-c43a5f321623)
+<img width="466" alt="battle_results" src="https://github.com/user-attachments/assets/99049794-c941-4f21-adaf-494ba479e1e5">
 
 
 ## Live URL and Repository
